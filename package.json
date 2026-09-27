@@ -4,6 +4,9 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "webpack --config webpack.plugin.config.js",
+		"watch": "webpack --config webpack.plugin.config.js --mode development --watch",
+		"serve:test": "live-server --port=8081 --open=/test/index.html --watch=plugin/cf7-extended-validation/dist,test",
+		"dev": "concurrently -n webpack,server -c blue,green \"npm:watch\" \"npm:serve:test\"",
 		"package": "cd plugin && bestzip ../build/cf7-extended-validation-1.0.0.zip cf7-extended-validation"
 	},
 	"repository": {
@@ -16,7 +19,6 @@
 		"url": "https://github.com/Unknownsock/plugin-cf7-extended-validation/issues"
 	},
 	"homepage": "https://github.com/Unknownsock/plugin-cf7-extended-validation#readme",
-	"dependencies": {},
 	"description": "CF7 Extended Validation Plugin - Development Environment",
 	"devDependencies": {
 		"@babel/core": "^7.25.7",
@@ -24,8 +26,10 @@
 		"autoprefixer": "^10.4.20",
 		"babel-loader": "^9.2.1",
 		"bestzip": "^2.2.1",
+		"concurrently": "^10.0.5",
 		"css-loader": "^7.1.2",
 		"cssnano": "^7.0.6",
+		"live-server": "^1.2.2",
 		"mini-css-extract-plugin": "^2.9.1",
 		"postcss-loader": "^8.1.1",
 		"postcss-preset-env": "^10.0.6",

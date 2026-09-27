@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CF7 Extended Validation — Test Page</title>
+<link rel="stylesheet" href="../plugin/cf7-extended-validation/dist/cf7-extended-validation.min.css">
+<style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; }
+    .wpcf7-form-control-wrap { display: block; margin-bottom: 16px; }
+    input[type="text"], input[type="email"] { padding: 8px; width: 100%; box-sizing: border-box; }
+    .wpcf7-submit { padding: 10px 20px; font-size: 15px; }
+    .controls { margin-top: 32px; padding-top: 16px; border-top: 1px solid #ccc; }
+    .controls button { margin: 4px; padding: 6px 12px; }
+    p.note { color: #666; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<h1>CF7 Extended Validation — Test Page</h1>
+<p class="note">
+    Mocks the Contact Form 7 markup and fires its custom events, so the plugin's
+    JS/CSS can be exercised without WordPress or CF7 installed. Run
+    <code>npm run build</code> first so <code>dist/</code> exists.
+</p>
+
+<form class="wpcf7-form" data-wpcf7-id="123">
+    <div class="wpcf7-form-control-wrap">
+        <label>Name<br><input type="text" name="name"></label>
+    </div>
+    <div class="wpcf7-form-control-wrap">
+        <label>Email<br><input type="email" name="email"></label>
+    </div>
+    <p>
+        <input type="submit" class="wpcf7-submit" value="Submit">
+    </p>
+</form>
+
+<div class="controls">
+    <p><strong>Simulate submission outcome</strong> (click Submit above first, then one of these to resolve it):</p>
+    <button type="button" data-outcome="wpcf7mailsent">Mail sent (success)</button>
+    <button type="button" data-outcome="wpcf7invalid">Invalid</button>
+    <button type="button" data-outcome="wpcf7spam">Spam</button>
+    <button type="button" data-outcome="wpcf7mailfailed">Mail failed</button>
+</div>
+
+<script src="../plugin/cf7-extended-validation/dist/cf7-extended-validation.min.js"></script>
+<script>
+    const form = document.querySelector('.wpcf7-form');
+    const formId = form.dataset.wpcf7Id;
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        // Mirrors what CF7's own JS does right before it sends the AJAX request.
+        form.dispatchEvent(new CustomEvent('wpcf7beforesubmit', {
+            bubbles: true,
+            detail: { contactFormId: formId }
+        }));
+    });
+
+    document.querySelectorAll('.controls button').forEach(button => {
+        button.addEventListener('click', function () {
+            const outcome = button.dataset.outcome;
+            // CF7 fires the specific outcome event, then always fires wpcf7submit.
+            form.dispatchEvent(new CustomEvent(outcome, {
+                bubbles: true,
+                detail: { contactFormId: formId }
+            }));
+            document.dispatchEvent(new CustomEvent('wpcf7submit', {
+                bubbles: true,
+                detail: { contactFormId: formId }
+            }));
+        });
+    });
+</script>
+
+</body>
+</html>
