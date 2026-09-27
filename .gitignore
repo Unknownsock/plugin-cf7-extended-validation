@@ -1,0 +1,11 @@
+**/.DS_Store
+/node_modules
+.env
+/wordpress
+/uploads
+/build/*
+!/build/.gitkeep
+/plugin/*/dist/
+
+# Ignore Husky scripts, but track the .husky directory itself
+!/.husky/
